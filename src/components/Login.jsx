@@ -3,18 +3,20 @@ import '../styles/Login.css'
 import user_icon from '../assets/person.png'
 import axios from 'axios';
 import password_icon from '../assets/password.png'
-import { act } from 'react-dom/test-utils';
 import gray_icon from '../assets/gray.jpg'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const LoginSignUp=()=>{
 
     const [action,setAction]=useState("Sign Up");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setUserType] = useState('jobseeker');
+    const [role, setUserType] = useState('USER');
     const [phone,setPhone]=useState('');
     const [firstName,setFirst]=useState('');
     const [lastName,setLast]=useState('');
     const [companyName,setCompanyName]=useState('');
+    
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -56,22 +58,43 @@ const LoginSignUp=()=>{
                 });
                 if(response.status===200){
                     setAction("Login");
+                    setEmail('');
+                    setPassword('');
+                    setFirst('');
+                    setLast('');
+                    setPhone('');
+                    setCompanyName('');
+                    toast.success('Registered successfuly !!!');
                 }
             }else{
                 const response = await axios.post('http://localhost:8080/auth/authenticate', {
                     email,
                     password            
                 });
+                
+                const jwt=response.data.jwt;
+
+                if(jwt){
+                    localStorage.setItem("jwt", 'Bearer ' + jwt);
+                    localStorage.setItem("LoginMessage","Logged in successfuly");
+                    window.location.href = 'http://localhost:3000/';
+                }else{
+                    toast.info("The server had some trouble with your request !!!")
+                }
+                
+                
             }
           // Handle the response from the backend here
         } catch (error) {
           console.error('Error:', error);
+          toast.error("Email and password combination don't match !!!");
         }
       };
 
 
     return(
         <div className='container'>
+            <ToastContainer autoClose={3000}/>
             <div className='header'>
                 <div className='text'>{action}</div>
                 <div className='underline'></div>
@@ -83,9 +106,9 @@ const LoginSignUp=()=>{
                     <input
                     className='radio-group-in'
                         type="radio"
-                        value="employer"
-                        checked={role === 'employer'}
-                        onChange={() => setUserType('employer')}
+                        value="EMPLOYER"
+                        checked={role === 'EMPLOYER'}
+                        onChange={() => setUserType('EMPLOYER')}
                     />
                     Employer
                     </label>
@@ -93,9 +116,9 @@ const LoginSignUp=()=>{
                     <input
                         className='radio-group-in'
                         type="radio"
-                        value="jobseeker"
-                        checked={role === 'jobseeker'}
-                        onChange={() => setUserType('jobseeker')}
+                        value="USER"
+                        checked={role === 'USER'}
+                        onChange={() => setUserType('USER')}
                     />
                     Job Seeker
                     </label>
@@ -111,7 +134,7 @@ const LoginSignUp=()=>{
                     <input type='password' value={password} placeholder='Password' onChange={handlePasswordChange}></input>
                 </div>
 
-                {role==="jobseeker" && action==="Sign Up"?<div className='inputss'>
+                {role==="USER" && action==="Sign Up"?<div className='inputss'>
                     <div className='input'>
                         <img src={gray_icon} alt=""></img>
                         <input type='text' value={phone} placeholder='Phone Number' onChange={handlePhoneChange}></input>
@@ -124,7 +147,7 @@ const LoginSignUp=()=>{
                         <img src={gray_icon} alt=""></img>
                         <input type='text' value={lastName} placeholder='Last Name' onChange={handleLastChange}></input>
                     </div>
-                </div>:role==="employer" && action==="Sign Up"?<div className='inputss'>
+                </div>:role==="EMPLOYER" && action==="Sign Up"?<div className='inputss'>
                     <div className='input'>
                         <img src={gray_icon} alt=""></img>
                         <input type='text' value={companyName} placeholder='Company Name' onChange={handleCompanyChange}></input>
