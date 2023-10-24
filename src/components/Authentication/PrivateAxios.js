@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useAuth } from './AuthContext';
+
 
 const axiosPrivate= axios.create({
   headers:{"Content-Type":"application/json"}

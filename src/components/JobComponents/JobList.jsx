@@ -13,7 +13,7 @@ function JobList({ jobs, searchQuery }) {
       job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  
+
 
   return (
     <div className='job-list'>
@@ -23,7 +23,7 @@ function JobList({ jobs, searchQuery }) {
           <h3>{job.jobTitle}</h3>
           <p>Company: {job.user.companyName}</p>
           <p>Requirements: {job.jobRequirements}</p>
-          <Link to={`/job/${job.jobId}`}>View Details</Link>
+          {localStorage.getItem("jwt")!==""?<Link to={`/job/${job.jobId}`}>View Details</Link>:<Link to={`/register`}>Log In</Link>}
         </div>
       ))}
     </div>

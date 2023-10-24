@@ -73,10 +73,13 @@ const LoginSignUp=()=>{
                 });
                 
                 const jwt=response.data.jwt;
-
+                const userRole=response.data.role;
+                console.log(userRole);
+                console.log(response);
                 if(jwt){
                     localStorage.setItem("jwt", 'Bearer ' + jwt);
                     localStorage.setItem("LoginMessage","Logged in successfuly");
+                    localStorage.setItem("role",userRole);
                     window.location.href = 'http://localhost:3000/';
                 }else{
                     toast.info("The server had some trouble with your request !!!")
