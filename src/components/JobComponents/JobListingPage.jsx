@@ -36,7 +36,7 @@ function JobListingPage() {
   return (
     <div className='job-listing-page'>
       
-      <h1>Available Jobs</h1>
+      <h1 className='page-title'>Available Jobs</h1>
       <SearchBar onSearch={setSearchQuery} />
       <JobList jobs={jobs} searchQuery={searchQuery} />
       <ToastContainer autoClose={3000}/>

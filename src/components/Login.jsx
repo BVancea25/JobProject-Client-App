@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import '../styles/Login.css'
 import user_icon from '../assets/person.png'
 import axios from 'axios';
@@ -74,8 +74,7 @@ const LoginSignUp=()=>{
                 
                 const jwt=response.data.jwt;
                 const userRole=response.data.role;
-                console.log(userRole);
-                console.log(response);
+                
                 if(jwt){
                     localStorage.setItem("jwt", 'Bearer ' + jwt);
                     localStorage.setItem("LoginMessage","Logged in successfuly");

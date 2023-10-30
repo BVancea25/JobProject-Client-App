@@ -2,6 +2,7 @@
 import React from 'react';
 import "../../styles/Job/JobListingPage.css"
 import { Link } from 'react-router-dom';
+import "../../styles/Job/JobListingPage.css"
 
 function JobList({ jobs, searchQuery }) {
 
@@ -19,11 +20,10 @@ function JobList({ jobs, searchQuery }) {
     <div className='job-list'>
       {filteredJobs.map((job) => (
         <div className='job-card' key={job.jobId}>
-          <p>{job.jobId}</p>
-          <h3>{job.jobTitle}</h3>
-          <p>Company: {job.user.companyName}</p>
-          <p>Requirements: {job.jobRequirements}</p>
-          {localStorage.getItem("jwt")!==""?<Link to={`/job/${job.jobId}`}>View Details</Link>:<Link to={`/register`}>Log In</Link>}
+          <h3 className='text'>{job.jobTitle}</h3>
+          <p className='text'>Company: {job.user.companyName}</p>
+          <p className='text'>Requirements: {job.jobRequirements}</p>
+          {localStorage.getItem("jwt")!==null?<Link to={`/job/${job.jobId}`}>View Details</Link>:<Link to={`/register`}>Log In</Link>}
         </div>
       ))}
     </div>

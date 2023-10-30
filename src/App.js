@@ -7,7 +7,10 @@ import JobDetails from './components/JobComponents/JobDetails';
 
 import Navbar from './components/NavBar/NavBar';
 
+
 function App() {
+
+  
   return (
     <div className="App">
       

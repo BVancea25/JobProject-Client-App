@@ -10,18 +10,16 @@ import {
 import Logout from '../Logout';
 
 function Navbar(){
-  const role=localStorage.getItem("role");
-  const [isAuth,setAuth]=useState('no');
+  const [role,setRole]=useState('');
   useEffect(()=>{
-    
-      if(role==="[USER]" || role==="[EMPLOYER]"){
-        setAuth('yes');
-      }
-      
-    }
-  ,[role])
-    
-  
+   if(localStorage.getItem("role")){
+    setRole(localStorage.getItem("role"));
+   } 
+  },[])
+
+  const logoutCallBack=()=>{
+    setRole('');
+  }
   return (
     <>
       <Nav>
@@ -40,9 +38,11 @@ function Navbar(){
           </NavMenu>
         )}
 
-        {isAuth==='yes' ?(
+        
+
+        {role!=='' ?(
           <NavBtn>
-            <Logout/>
+            <Logout setRole={logoutCallBack}/>
           </NavBtn>
         ) : (
           <NavBtn>

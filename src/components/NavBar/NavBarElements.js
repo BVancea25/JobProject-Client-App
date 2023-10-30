@@ -61,5 +61,6 @@ export const NavBtnLink = styled(Link)`
   border: none;
   cursor: pointer;
   text-decoration: none;
+  font-weight:700;
   
 `;

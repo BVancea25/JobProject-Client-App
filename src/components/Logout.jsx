@@ -1,20 +1,22 @@
 import axios from "axios";
 import { NavBtnLink } from "./NavBar/NavBarElements";
 
-const Logout = () => {
+const Logout = ({logoutCallBack}) => {
 
   const handleLogout = () => {
     axios
       .post("http://localhost:8080/logout")
-      .then(() => {
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("role");
+      .then((res) => {
+        if(res.status===200){
+          window.localStorage.clear();      
+          logoutCallBack();
+        }
       })
       .catch((err) => {
         console.log(err);
+        window.localStorage.clear();   
       });
   };
-
   return (
     <NavBtnLink to="/" onClick={handleLogout}>
       Logout
