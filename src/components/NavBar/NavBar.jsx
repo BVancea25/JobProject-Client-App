@@ -14,8 +14,11 @@ function Navbar(){
   useEffect(()=>{
    if(localStorage.getItem("role")){
     setRole(localStorage.getItem("role"));
+   }
+   else{
+    setRole('');
    } 
-  },[])
+  },[role])
 
   const logoutCallBack=()=>{
     setRole('');
