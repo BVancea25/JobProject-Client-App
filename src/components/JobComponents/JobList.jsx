@@ -3,10 +3,11 @@ import React from 'react';
 import "../../styles/Job/JobListingPage.css"
 import { Link } from 'react-router-dom';
 import "../../styles/Job/JobListingPage.css"
+import useAuth from '../../hooks/useAuth';
 
 function JobList({ jobs, searchQuery }) {
-
-  console.log(jobs);
+  const {auth}=useAuth();
+  console.log(auth.userRole);
   const filteredJobs = jobs.filter(
     (job) =>
       job.user.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -23,7 +24,7 @@ function JobList({ jobs, searchQuery }) {
           <h3 className='text'>{job.jobTitle}</h3>
           <p className='text'>Company: {job.user.companyName}</p>
           <p className='text'>Requirements: {job.jobRequirements}</p>
-          {localStorage.getItem("jwt")!==null?<Link to={`/job/${job.jobId}`}>View Details</Link>:<Link to={`/register`}>Log In</Link>}
+          {auth.userRole!==undefined || auth.userRole!=="" ?<Link to={`/job/${job.jobId}`}>View Details</Link>:<Link to={`/register`}>Log In</Link>}
         </div>
       ))}
     </div>

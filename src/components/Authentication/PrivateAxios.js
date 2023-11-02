@@ -1,23 +1,34 @@
 import axios from 'axios';
+import { useEffect } from 'react';
+import useAuth from '../../hooks/useAuth';
 
+const useAxiosPrivate = () => {
+  const { auth } = useAuth();
+  const axiosPrivate = axios.create({
+    headers: { 'Content-Type': 'application/json' },
+  });
 
-const axiosPrivate= axios.create({
-  headers:{"Content-Type":"application/json"}
-});
+  useEffect(() => {
 
-axiosPrivate.interceptors.request.use(
-  (config) => {
-    const token=localStorage.getItem('jwt');
-    console.log(token);
-    if (token) {
-      config.headers['Authorization'] = token;
-      
+    const requestIntercept=axiosPrivate.interceptors.request.use(
+      (config) => {
+        if (auth.jwt) {
+          config.headers['Authorization'] = `Bearer `+auth.jwt;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    
+    return ()=>{
+      axiosPrivate.interceptors.request.eject(requestIntercept);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  }, [auth.jwt]);
 
-export default axiosPrivate;
+  return axiosPrivate;
+};
+
+export default useAxiosPrivate;

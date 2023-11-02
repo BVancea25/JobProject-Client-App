@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Nav,
   NavLink,
@@ -8,44 +8,34 @@ import {
   NavBtnLink,
 } from "./NavBarElements";
 import Logout from '../Logout';
+import useAuth from "../../hooks/useAuth";
 
 function Navbar(){
-  const [role,setRole]=useState('');
+  const {auth}=useAuth();
   useEffect(()=>{
-   if(localStorage.getItem("role")){
-    setRole(localStorage.getItem("role"));
-   }
-   else{
-    setRole('');
-   } 
-  },[role])
-
-  const logoutCallBack=()=>{
-    setRole('');
-  }
+    console.log("Current role of user:"+auth.userRole);
+  },[auth.userRole])
   return (
     <>
       <Nav>
         <Bars />
 
-        {role==="[USER]" ? (
+        {auth.userRole==="[USER]" ? (
           <NavMenu>
             <NavLink to="/">Jobs</NavLink>
             <NavLink to="/">Your Applications</NavLink>
           </NavMenu>
         ) : (
           <NavMenu>
-            <NavLink to="/produse">Produse</NavLink>
-            <NavLink to="/locatii">Locatii</NavLink>
-            <NavLink to="/comanda">Comanda</NavLink>
+            <NavLink to="/jobs">Your Jobs</NavLink>
           </NavMenu>
         )}
 
         
 
-        {role!=='' ?(
+        {auth?.userRole==='[USER]' || auth?.userRole==='[EMPLOYER]' ?(
           <NavBtn>
-            <Logout setRole={logoutCallBack}/>
+            <Logout/>
           </NavBtn>
         ) : (
           <NavBtn>

@@ -6,8 +6,11 @@ import password_icon from '../assets/password.png'
 import gray_icon from '../assets/gray.jpg'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 const LoginSignUp=()=>{
-
+    const nav=useNavigate();
+    const {setAuth}=useAuth();
     const [action,setAction]=useState("Sign Up");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -76,10 +79,15 @@ const LoginSignUp=()=>{
                 const userRole=response.data.role;
                 
                 if(jwt){
-                    localStorage.setItem("jwt", 'Bearer ' + jwt);
                     localStorage.setItem("LoginMessage","Logged in successfuly");
-                    localStorage.setItem("role",userRole);
-                    window.location.href = 'http://localhost:3000/';
+                    setAuth({ userRole, jwt });
+                    if(userRole==="[USER]"){
+                        nav("/");
+                        console.log("to job list USER")
+                    }else{
+                        nav("/jobs");
+                        console.log("to job list EMPLOYER")
+                    }
                 }else{
                     toast.info("The server had some trouble with your request !!!")
                 }
