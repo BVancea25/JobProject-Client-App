@@ -20,15 +20,15 @@ function Navbar(){
       <Nav>
         <Bars />
 
-        {auth.userRole==="[USER]" ? (
-          <NavMenu>
-            <NavLink to="/">Jobs</NavLink>
-            <NavLink to="/">Your Applications</NavLink>
-          </NavMenu>
+        {auth.userRole==="[EMPLOYER]" ? (
+         <NavMenu>
+         <NavLink to="/jobs">Your Jobs</NavLink>
+        </NavMenu>
         ) : (
           <NavMenu>
-            <NavLink to="/jobs">Your Jobs</NavLink>
-          </NavMenu>
+          <NavLink to="/">Jobs</NavLink>
+          <NavLink to="/application/user">Your Applications</NavLink>
+        </NavMenu>
         )}
 
         

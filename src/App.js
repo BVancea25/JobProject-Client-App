@@ -7,7 +7,7 @@ import JobDetails from './components/JobComponents/JobDetails';
 import JobEmployerPage from "./components/JobEmployerComponents/JobsEmployerPage"
 import Navbar from './components/NavBar/NavBar';
 import RequireAuth from './components/Authentication/RequireAuth';
-
+import ApplciationPage from './components/JobUserComponents/ApplicationPage';
 
 function App() {
 
@@ -23,6 +23,9 @@ function App() {
               <Route path='/job/:id' element={<JobDetails/>}/>
             <Route element={<RequireAuth allowedRole="[EMPLOYER]"/>}>
               <Route path='/jobs' element={<JobEmployerPage/>}/>
+            </Route>
+            <Route element={<RequireAuth allowedRole="[USER]"/>}>
+              <Route path='/application/user' element={<ApplciationPage/>}/>
             </Route>
           </Routes>
       </Router>
