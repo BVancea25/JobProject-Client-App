@@ -3,7 +3,7 @@ import React from 'react';
 import "../../styles/Job/JobListingPage.css"
 
 import "../../styles/Job/JobListingPage.css"
-import { Navigate } from 'react-router-dom';
+
 
 function ApplicationList({ applications}) {
  

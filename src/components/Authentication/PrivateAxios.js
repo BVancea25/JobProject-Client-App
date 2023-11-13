@@ -13,6 +13,7 @@ const useAxiosPrivate = () => {
     const requestIntercept=axiosPrivate.interceptors.request.use(
       (config) => {
         if (auth.jwt) {
+          console.log("am pus header Authorization");
           config.headers['Authorization'] = `Bearer `+auth.jwt;
         }
         return config;
@@ -23,9 +24,9 @@ const useAxiosPrivate = () => {
     );
 
     
-    return ()=>{
-      axiosPrivate.interceptors.request.eject(requestIntercept);
-    }
+     return ()=>{
+       axiosPrivate.interceptors.request.eject(requestIntercept);
+     }
   }, [auth.jwt]);
 
   return axiosPrivate;

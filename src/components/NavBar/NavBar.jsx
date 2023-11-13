@@ -23,6 +23,7 @@ function Navbar(){
         {auth.userRole==="[EMPLOYER]" ? (
          <NavMenu>
          <NavLink to="/jobs">Your Jobs</NavLink>
+         <NavLink to="/application/employer">Applications</NavLink>
         </NavMenu>
         ) : (
           <NavMenu>

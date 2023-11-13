@@ -3,12 +3,10 @@ import React from 'react';
 import "../../styles/Job/JobListingPage.css"
 
 import "../../styles/Job/JobListingPage.css"
-import { Navigate } from 'react-router-dom';
 
-function JobList({ jobs}) {
-  const navigate=()=>{
-    return <Navigate to={"/ceva"}/>;
-  }
+
+function JobList({deleteJob,jobs}) {
+
 
   return (
     <div className='job-list'>
@@ -17,10 +15,12 @@ function JobList({ jobs}) {
           <h3 className='text'>{job.jobTitle}</h3>
           <p className='text'>Company: {job.user.companyName}</p>
           <p className='text'>Requirements: {job.jobRequirements}</p>
-          <button className='' onClick={navigate}>View Applications</button>
+          <button onClick={() => deleteJob(job.jobId)}>Delete</button>
         </div>
       ))}
+      
     </div>
+    
   );
 }
 
