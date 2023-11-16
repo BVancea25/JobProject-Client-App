@@ -19,6 +19,7 @@ const LoginSignUp=()=>{
     const [firstName,setFirst]=useState('');
     const [lastName,setLast]=useState('');
     const [companyName,setCompanyName]=useState('');
+    const [cvFile,setCV]=useState(null);
     
 
     const handleEmailChange = (event) => {
@@ -46,19 +47,28 @@ const LoginSignUp=()=>{
         setCompanyName(event.target.value);
     };
 
+    const handleCVChange = (event) => {
+        const file = event.target.files[0];
+        setCV(file);
+      };
+
     const handleFormSubmit = async () => {
         try {
            if(action==="Sign Up"){ 
-                const response = await axios.post('http://localhost:8080/auth/register', {
+                const formData = new FormData();
+                formData.append('request', JSON.stringify({ 
                     email,
                     password,
                     role,
+                    phone,
                     firstName,
                     lastName,
-                    phone,
-                    companyName
-
-                });
+                    companyName,
+                  }));
+                
+                formData.append('cv', cvFile);
+                console.log(cvFile.type);
+                const response = await axios.post('http://localhost:8080/auth/register', formData,{headers:{'Content-Type':'multipart/form-data'}});
                 if(response.status===200){
                     setAction("Login");
                     setEmail('');
@@ -67,7 +77,10 @@ const LoginSignUp=()=>{
                     setLast('');
                     setPhone('');
                     setCompanyName('');
+                    setCV(null);
                     toast.success('Registered successfuly !!!');
+                }else{
+                    toast.error("Problem with server")
                 }
             }else{
                 const response = await axios.post('http://localhost:8080/auth/authenticate', {
@@ -157,6 +170,11 @@ const LoginSignUp=()=>{
                         <img src={gray_icon} alt=""></img>
                         <input type='text' value={lastName} placeholder='Last Name' onChange={handleLastChange}></input>
                     </div>
+                    <div className='input'>
+                        <img src={gray_icon} alt=""></img>
+                        <input type='file' accept='.pdf' placeholder='Your CV' onChange={handleCVChange}></input>
+                    </div>
+                    
                 </div>:role==="EMPLOYER" && action==="Sign Up"?<div className='inputss'>
                     <div className='input'>
                         <img src={gray_icon} alt=""></img>

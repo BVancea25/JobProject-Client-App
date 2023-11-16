@@ -1,0 +1,38 @@
+.pending{
+    color: rgb(223, 226, 52);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.rejected{
+    color: #e23434;
+    font-size: 18px;
+    font-weight: 700;
+}
+.approved-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
+    color: #fff;
+    background: #055c19;
+    border-radius: 19px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rejected-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
+    color: #fff;
+    background: #e23434;
+    border-radius: 19px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+}

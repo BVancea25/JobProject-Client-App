@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import "../../styles/Job/JobDetails.css";
-import axiosPrivate from '../Authentication/PrivateAxios';
+
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useAuth from '../../hooks/useAuth';
 
 function JobDetailPage() {
-
+    const {auth}=useAuth();
     const {id}=useParams();
     const [job,setJob]=useState();
     const status='pending';
@@ -27,10 +28,14 @@ function JobDetailPage() {
 
     const handleApplication= ()=>{
      try{
-      axiosPrivate
+      axios
         .post(`http://localhost:8080/application/${id}`,{
           coverLetter,
           status
+        },{
+          headers:{
+            'Authorization':`Bearer `+auth.jwt
+          }
         })
         .then((res)=>{
           console.log(res);
