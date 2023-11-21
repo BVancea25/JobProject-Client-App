@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
-
-function PDFViewer({ userEmail }) {
+import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+function PDFViewer() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const { auth } = useAuth();
-  const [viewerOpen, setViewerOpen] = useState(false);
-
+  const {email}=useParams();
+  //const [viewerOpen, setViewerOpen] = useState(false);
+  useEffect(()=>{
+    fetchPDF();
+    console.log(email)
+  },[])
   const fetchPDF = () => {
-    const apiUrl = `http://localhost:8080/cv/${userEmail}`;
+    const apiUrl = `http://localhost:8080/cv/${email}`;
 
     axios.get(apiUrl, {
       responseType: 'arraybuffer',
@@ -20,16 +25,16 @@ function PDFViewer({ userEmail }) {
         const blob = new Blob([response.data], { type: 'application/pdf' });
         const pdfUrl = URL.createObjectURL(blob);
         setPdfUrl(pdfUrl);
-        setViewerOpen(true);
+       // setViewerOpen(true);
       })
       .catch(error => {
         console.error('Error fetching PDF:', error);
       });
   };
 
-  const closeViewer = () => {
-    setViewerOpen(false);
-  };
+  // const closeViewer = () => {
+  //   setViewerOpen(false);
+  // };
 
   const downloadPDF = () => {
     // You can create a hidden link and programmatically trigger the download
@@ -42,14 +47,14 @@ function PDFViewer({ userEmail }) {
 
   return (
     <div>
-      <button onClick={fetchPDF}>Open CV</button>
-      {viewerOpen && (
+      
+      
         <div>
-          <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
+          <embed src={pdfUrl} type="application/pdf" width="100%" height="900px" />
           <button onClick={downloadPDF}>Download PDF</button>
-          <button onClick={closeViewer}>Close PDF Viewer</button>
+          <Link to={"/application/employer"}>Back</Link> 
         </div>
-      )}
+      
     </div>
   );
 }

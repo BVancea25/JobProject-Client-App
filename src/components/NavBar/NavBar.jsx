@@ -24,11 +24,13 @@ function Navbar(){
          <NavMenu>
          <NavLink to="/jobs">Your Jobs</NavLink>
          <NavLink to="/application/employer">Applications</NavLink>
+         <NavLink to="/chat">Chats</NavLink>
         </NavMenu>
         ) : (
           <NavMenu>
           <NavLink to="/">Jobs</NavLink>
           <NavLink to="/application/user">Your Applications</NavLink>
+          <NavLink to="/chat">Chats</NavLink>
         </NavMenu>
         )}
 

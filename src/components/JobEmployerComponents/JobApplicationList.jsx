@@ -3,7 +3,8 @@ import "../../styles/Job/JobListingPage.css";
 import "../../styles/Status.css";
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
-import CvViewer from "../CvViewer";
+
+import { Link } from 'react-router-dom';
 function JobApplicationList({ applications }) {
   const { auth } = useAuth();
   const [updatedApplications, setUpdatedApplications] = useState([]);
@@ -73,7 +74,9 @@ function JobApplicationList({ applications }) {
               </button>
             </div>
           )}
-         <CvViewer userEmail={application.userEmail}/> 
+          <Link to={`/cv/${application.userEmail}`}>CV</Link>
+          <Link to={`/chat/${application.userEmail}`}>Send message</Link>
+        
           
         </div>
       ))}

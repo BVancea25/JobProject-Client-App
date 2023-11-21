@@ -56,19 +56,20 @@ const LoginSignUp=()=>{
         try {
            if(action==="Sign Up"){ 
                 const formData = new FormData();
-                formData.append('request', JSON.stringify({ 
-                    email,
-                    password,
-                    role,
-                    phone,
-                    firstName,
-                    lastName,
-                    companyName,
-                  }));
+                const request={
+                    email:email,
+                    password:password,
+                    role:role,
+                    phone:phone,
+                    firstName:firstName,
+                    lastName:lastName,
+                    companyName:companyName
+                }
+                formData.append('jsonRequest',JSON.stringify(request));
                 
                 formData.append('cv', cvFile);
-                console.log(cvFile.type);
-                const response = await axios.post('http://localhost:8080/auth/register', formData,{headers:{'Content-Type':'multipart/form-data'}});
+                
+                const response = await axios.post('http://localhost:8080/auth/register', formData);
                 if(response.status===200){
                     setAction("Login");
                     setEmail('');
@@ -93,7 +94,7 @@ const LoginSignUp=()=>{
                 
                 if(jwt){
                     localStorage.setItem("LoginMessage","Logged in successfuly");
-                    setAuth({ userRole, jwt });
+                    setAuth({ userRole, jwt, email });
                     if(userRole==="[USER]"){
                         nav("/");
                         console.log("to job list USER")
