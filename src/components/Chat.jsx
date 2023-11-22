@@ -32,45 +32,55 @@ const PrivateChat = () => {
       console.log(err);
     }
   }
+
   useEffect(()=>{
     getEmails();
   },[])
+
+
   useEffect(() => {
     const socket = new SockJS('http://localhost:8080/ws');
     const stomp = Stomp.over(socket);
-
+    
     
     setSenderEmail(auth.email);
 
     stomp.connect({}, () => {
       setStompClient(stomp);
-      console.log("ceva")
+      console.log("Connectat la endpoint websocket")
     },(err)=>{
       console.log("nu a mers")
     });
 
-    return () => {
-      if (stomp && stomp.connected) {
-        stomp.disconnect();
-      }
-    };
+    // return () => {
+    //   if (stomp && stomp.connected) {
+    //     stomp.disconnect();
+    //     console.log("Component unmounted 1");
+    //   }
+    // };
   }, [receiverEmail, auth.email]);
+
+
+  
+
+
+
+
 
   useEffect(() => {
     if (stompClient) {
        stompClient.subscribe(`/user/${senderEmail}/private`, (message) => {
         const chatMessage = JSON.parse(message.body);
-        console.log(chatMessage);
-        setMessages([...messages, chatMessage]);
+        console.log(message);
+        setMessages((prevMessages)=>[...prevMessages, chatMessage]);
+        
       });
 
-      // return () => {
-      //   if (subscription) {
-      //     subscription.unsubscribe();
-      //   }
-      // };
     }
-  }, [stompClient]);
+    return()=>{
+      console.log("Component unmounted 2");
+    }
+  }, [receiverEmail]);
 
   const handleSend = () => {
     const message = messageInput.trim();
@@ -81,9 +91,9 @@ const PrivateChat = () => {
         receiverEmail,
         message,
       };
-      setMessages([...messages,chatMessage]);
+      setMessages((prevMessages)=>[...prevMessages, chatMessage]);
       stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
-      console.log(chatMessage);
+      
       setMessageInput('');
     } else {
       console.error('Client or message undefined');
@@ -91,6 +101,17 @@ const PrivateChat = () => {
   };
 
   const changeReceiver=(index)=>{
+    console.log(users[index]);
+    
+    axios.get(`http://localhost:8080/chat/${users[index]}/${senderEmail}`,{
+      headers:{
+        'Authorization':`Bearer `+auth.jwt
+      }    
+    }).then((res)=>{
+      setMessages(res.data);
+    }).catch((err)=>{
+      console.log(err);
+    })
     setReceiverEmail(users[index]);
   }
 
@@ -103,26 +124,35 @@ const PrivateChat = () => {
   }
 
   return (
-    <div style={{display:'flex',border:'1px',height:'500px'}}>
+    <div style={{display:'flex',border:'1px',height:'500px',justifyContent:'center'}}>
       <div style={{width:'200px',borderRight:'1px solid',padding:'10px'}}>
         {users.map((email,index)=>(
-          <div key={index}>
-            <button onClick={()=>changeReceiver(index)}>{email}</button>
+          <div style={{paddingTop:'3px',border:'5px'}} key={index}>{auth.email!==email?<button style={{width:'200px'}} onClick={()=>changeReceiver(index)}>{email}</button>:<></>}
+            
           </div>
         ))}
       </div>
       
       <div style={{width:'500px',borderRight:'1px solid',padding:'10px'}}>
-        <div style={{flexGrow:'1',padding:'10px',overflowY:'auto',color:'white',height:'500px'}}>
+        <div style={{flexGrow:'1',padding:'5px',overflowY:'auto',background:'white',height:'500px'}}>
           {messages.map((msg, index) => (
-            <div key={index}>
-              <strong>{msg.senderEmail}:</strong> {msg.message}
+            <div key={index}>{msg.senderEmail===auth.email?
+              <div style={{paddingLeft:'250px'}}>
+                <p style={{fontSize:'14px'}}>Me</p> 
+                <p style={{fontSize:'18px',fontWeight:'bold'}}>{msg.message}</p>
+              </div>:
+              <div style={{paddingRight:'250px'}}>
+                <p style={{fontSize:'14px'}}>{msg.senderEmail}</p> 
+                <p style={{fontSize:'18px',fontWeight:'bold'}}>{msg.message}</p>
+              </div>
+            }
             </div>
           ))}
+          <input style={{width:'300px',marginTop:'100px'}} type="text" value={messageInput} onChange={handleInputChange} />
+          <button onClick={handleSend}>Send</button>
         </div>
         <div>
-          <input type="text" value={messageInput} onChange={handleInputChange} />
-          <button onClick={handleSend}>Send</button>
+          
         </div>
         </div>  
     </div>

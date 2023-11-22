@@ -75,7 +75,7 @@ function JobApplicationList({ applications }) {
             </div>
           )}
           <Link to={`/cv/${application.userEmail}`}>CV</Link>
-          <Link to={`/chat/${application.userEmail}`}>Send message</Link>
+          
         
           
         </div>

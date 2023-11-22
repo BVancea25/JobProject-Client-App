@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import "../../styles/Job/JobDetails.css";
 
@@ -13,6 +13,7 @@ function JobDetailPage() {
     const [job,setJob]=useState();
     const status='pending';
     const [coverLetter,setCover]=useState('');
+    const nav=useNavigate();
 
     useEffect(() => {
         axios
@@ -42,6 +43,9 @@ function JobDetailPage() {
           toast.success("Posted application succssesfuly");
         })
         .catch((err)=>{
+          if(err.response.status===403){
+            nav('/register');
+          }
           console.log(err);
           toast.error("Something went wrong");
         });

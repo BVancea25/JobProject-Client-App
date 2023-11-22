@@ -13,7 +13,7 @@ import useAuth from "../../hooks/useAuth";
 function Navbar(){
   const {auth}=useAuth();
   useEffect(()=>{
-    console.log("Current role of user:"+auth.userRole);
+    
   },[auth.userRole])
   return (
     <>
@@ -24,14 +24,18 @@ function Navbar(){
          <NavMenu>
          <NavLink to="/jobs">Your Jobs</NavLink>
          <NavLink to="/application/employer">Applications</NavLink>
-         <NavLink to="/chat">Chats</NavLink>
+         <NavLink to="/chatE">Chats</NavLink>
         </NavMenu>
-        ) : (
+        ) : auth.userRole==="[USER]" ? (
           <NavMenu>
           <NavLink to="/">Jobs</NavLink>
           <NavLink to="/application/user">Your Applications</NavLink>
-          <NavLink to="/chat">Chats</NavLink>
+          <NavLink to="/chatU">Chats</NavLink>
         </NavMenu>
+        ):(
+          <NavMenu>
+            <NavLink to="/">Jobs</NavLink>
+          </NavMenu>
         )}
 
         

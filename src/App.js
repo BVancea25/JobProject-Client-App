@@ -22,16 +22,18 @@ function App() {
             <Routes>
               <Route path='/register' element={<LoginSignUp/>}/> 
               <Route path='/' element={<JobListingPage/>}/>
-              <Route path='/chat' element={<Chat/>}/>
+              
             <Route element={<RequireAuth allowedRole="[EMPLOYER]"/>}>
               <Route path='/jobs' element={<JobEmployerPage/>}/>
               <Route path='/application/employer' element={<JobApplicationPage/>}/>
               <Route path='/cv/:email' element={<CvViewer/>}/>
+              <Route path='/chatE' element={<Chat/>}/>
               
             </Route>
             <Route element={<RequireAuth allowedRole="[USER]"/>}>
               <Route path='/application/user' element={<ApplicationPage/>}/>
               <Route path='/job/:id' element={<JobDetails/>}/>
+              <Route path='/chatU' element={<Chat/>}/>
               
             </Route>
           </Routes>

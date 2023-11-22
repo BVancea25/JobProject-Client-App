@@ -3,7 +3,9 @@ import { useState,useEffect } from 'react';
 import useAxiosPrivate from '../Authentication/PrivateAxios';
 import JobApplicationList from './JobApplicationList';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 function JobApplicationPage(){
+  const nav=useNavigate();
   const {auth}=useAuth();
     const [applications, setApplications] = useState([]);
   const axiosPrivate=useAxiosPrivate();
@@ -15,10 +17,14 @@ function JobApplicationPage(){
         }
       })
       .then((res)=>{
-        console.log(res);
+        console.log(res.status);
+        
         setApplications(res.data);
       })
       .catch((err)=>{
+        if(err.response.status===403){
+          nav('/register');
+        }
         console.error(err);
       })
   }, []);
