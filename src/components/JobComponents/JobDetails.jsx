@@ -19,7 +19,7 @@ function JobDetailPage() {
         axios
           .get(`http://localhost:8080/job/${id}`)
           .then((res)=>{
-            
+            console.log(res.data);
             setJob(res.data);
           })
           .catch((err)=>{
@@ -39,7 +39,7 @@ function JobDetailPage() {
           }
         })
         .then((res)=>{
-          console.log(res);
+          setCover('');
           toast.success("Posted application succssesfuly");
         })
         .catch((err)=>{
@@ -68,7 +68,7 @@ function JobDetailPage() {
     <div className='wrapper'>
       <div className='job-detail-container'>
         <h1 className='job-title'>{job.jobTitle}</h1>
-        <p className='company-name'>Company: {job.user.companyName}</p>
+        <p className='company-name'>Company: {job.companyName}</p>
         <p className='requirements'>Description: {job.jobDescription}</p>
         <p className='requirements'>Requirements: {job.jobRequirements}</p>
         <p className='requirements'>Posting Date:{job.date}</p>

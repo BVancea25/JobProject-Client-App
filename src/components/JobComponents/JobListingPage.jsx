@@ -15,7 +15,7 @@ function JobListingPage() {
     axios
       .get("http://localhost:8080/job")
       .then((res)=>{
-        
+        console.log(res.data);
         setJobs(res.data);
       })
       .catch((err)=>{
