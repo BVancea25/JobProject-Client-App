@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import useAuth from '../hooks/useAuth';
@@ -13,7 +13,87 @@ const PrivateChat = () => {
   const [receiverEmail, setReceiverEmail] = useState('');
   const [senderEmail, setSenderEmail] = useState('');
   const [users,setUsers]=useState([]);
+  
+  
+  const pc=new RTCPeerConnection(null);
+  const socketRTC=new WebSocket('ws://localhost:8080/socket');
+  
+  const remoteVideo = document.getElementById('remoteVideo');
 
+
+  const getMedia=()=>{
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then((stream) => {
+      // Add local stream to peer connection
+      stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    })
+    .catch(error => console.error('Error accessing media devices:', error));
+  }
+
+  pc.onicecandidate=(event)=>{
+    if (event.candidate) {
+      // Send the ICE candidate to the remote peer via your signaling server
+      const iceCandidate = {
+        candidate: event.candidate.candidate,
+        sdpMLineIndex: event.candidate.sdpMLineIndex,
+        sdpMid: event.candidate.sdpMid
+      };
+      // Send iceCandidate to the remote peer using your signaling server
+      socketRTC.send(JSON.stringify({ type: 'ice-candidate', candidate: iceCandidate}));
+      
+    }
+  }
+
+  pc.ontrack = (event) => {
+    if (event.streams && event.streams[0]) {
+      remoteVideo.srcObject = event.streams[0];
+    } else {
+      if (!remoteVideo.srcObject) {
+        remoteVideo.srcObject = new MediaStream();
+      }
+      remoteVideo.srcObject.addTrack(event.track);
+    }
+  };
+
+  const sendOffer = async () => {
+    try {
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      socketRTC.send(JSON.stringify({ type: 'sdp-offer', offer: pc.localDescription}));
+    } catch (error) {
+      console.error('Error creating and sending offer:', error);
+    }
+  };
+
+
+socketRTC.addEventListener("open",(event)=>{
+  console.log('WebSocketRTC connection opened:', event);
+
+  socketRTC.addEventListener('message',async (event) => {
+    const message = JSON.parse(event.data);
+    console.log('WebRTC connection state:', pc.iceConnectionState);
+    if (message.type === 'sdp-offer') {
+      await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
+      console.log("offer from "+event.data.receiverEmail);
+      // Create and send an SDP answer to the remote peer
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socketRTC.send(JSON.stringify({ type: 'sdp-answer', answer: pc.localDescription}));
+    } else if (message.type === 'sdp-answer') {
+      console.log("Received sdp answer and i am");
+      await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
+      
+    } else if (message.type === 'ice-candidate') {
+      // Handle incoming ICE candidate from the remote peer
+      console.log("Received ICE");
+      pc.addIceCandidate(new RTCIceCandidate(message.candidate));
+    }
+  });
+  
+})
+  
+
+ 
   const getEmails=()=>{
     try{
       axios.get("http://localhost:8080/emails",{headers:{
@@ -35,12 +115,15 @@ const PrivateChat = () => {
 
   useEffect(()=>{
     getEmails();
+    getMedia();
   },[])
 
+  
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8080/ws');
     const stomp = Stomp.over(socket);
+    
     
     
     setSenderEmail(auth.email);
@@ -52,15 +135,20 @@ const PrivateChat = () => {
       console.log("nu a mers")
     });
 
-    // return () => {
-    //   if (stomp && stomp.connected) {
-    //     stomp.disconnect();
-    //     console.log("Component unmounted 1");
-    //   }
-    // };
+    
+    return () => {
+      if (stomp && stomp.connected) {
+        stomp.disconnect();
+        console.log("Component unmounted 1");
+      }
+    };
   }, [receiverEmail, auth.email]);
 
-
+ if(socketRTC!=null){
+  socketRTC.addEventListener("error", (event) => {
+    console.log("Ceva de la socket ", event)
+  })
+}
   
 
 
@@ -73,10 +161,10 @@ const PrivateChat = () => {
         const chatMessage = JSON.parse(message.body);
         console.log(message);
         setMessages((prevMessages)=>[...prevMessages, chatMessage]);
-        
       });
 
     }
+   
     return()=>{
       console.log("Component unmounted 2");
     }
@@ -150,9 +238,12 @@ const PrivateChat = () => {
           ))}
           <input style={{width:'300px',marginTop:'100px'}} type="text" value={messageInput} onChange={handleInputChange} />
           <button onClick={handleSend}>Send</button>
+          <video id="remoteVideo" autoPlay playsInline></video>
+
+
         </div>
         <div>
-          
+          <button onClick={sendOffer}>Call</button>
         </div>
         </div>  
     </div>
